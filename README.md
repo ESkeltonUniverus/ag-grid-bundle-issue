@@ -1,42 +1,42 @@
-# AG Grid Bundle Splitting Repro
+# AG Grid bundle splitting repro
 
-This repo demonstrates a downstream bundling issue with the published `ag-grid-community` package.
+This repo demonstrates a downstream chunk-splitting issue with the published AG Grid packages.
 
-Two lazy routes are built together in the same small React app:
+The repro app builds two lazy routes in the same React app:
 
-- a **simple grid** route that imports only `ClientSideRowModelModule`, `ModuleRegistry`, and `themeQuartz`
-- a **complex grid** route that imports `ClientSideRowModelModule` plus additional community modules such as `CsvExportModule`, `PaginationModule`, `RowSelectionModule`, and `NumberFilterModule`
+- `SimpleGridPage` imports only `ClientSideRowModelModule`, `ModuleRegistry`, and `themeQuartz`
+- `ComplexGridPage` imports those same symbols plus `CsvExportModule`, `PaginationModule`, `RowSelectionModule`, and `NumberFilterModule`
 
-The comparison is:
+The app is built in two modes:
 
-- **published package build**: the app imports `ag-grid-community` from the published package
-- **local source build**: the same app resolves `ag-grid-community` to AG Grid's `src/main.ts` via a Vite mode flag
+- **published package mode**: uses the installed `ag-grid-community` package
+- **source mode**: aliases `ag-grid-community` to the local AG Grid source tree
 
-The source-resolved build splits AG Grid internals much more cleanly. Route-specific modules stay in the complex route chunk instead of being hoisted into a large shared AG Grid chunk.
+The point of the repro is to show that the published package produces a larger shared AG Grid chunk, while source resolution keeps more complex-only code in the complex route chunk.
 
 ## Workspace layout
 
-- `projects/ag-grid-bundle-issue`: the single repro app used for both build modes
-- `packages/ag-grid-bundle-shared`: shared grid UI, data, and styles
-- `packages/ag-grid`: local AG Grid clone used by the source-resolved repro
+- `projects/ag-grid-bundle-issue` — repro app
+- `packages/ag-grid-bundle-shared` — shared data, UI, and styles
+- `packages/ag-grid` — local AG Grid checkout used by source mode
 
 ## Commands
 
 - `pnpm install`
-- `pnpm build:combined`
-- `pnpm build:combined-local`
-- `pnpm build`
-- `pnpm dev:combined`
-- `pnpm dev:combined-local`
+- `pnpm build` — build both modes
+- `pnpm build:combined` — build published package mode only
+- `pnpm build:combined-local` — build source mode only
+- `pnpm dev:combined` — run published package mode
+- `pnpm dev:combined-local` — run source mode
 
 ## Output
 
-Published-package output:
+Published package mode:
 
 - `projects/ag-grid-bundle-issue/dist/assets`
 - `projects/ag-grid-bundle-issue/dist/stats.html`
 
-Source-resolved output:
+Source mode:
 
 - `projects/ag-grid-bundle-issue/dist-source/assets`
 - `projects/ag-grid-bundle-issue/dist-source/stats.html`
@@ -45,8 +45,11 @@ Source-resolved output:
 
 After building both modes, compare:
 
-- the size of the shared `index.esm-*.js` AG Grid chunk
-- the size of the route chunks for `SimpleGridPage` and `ComplexGridPage`
-- `dist/stats.html` in each app for a visual chunk comparison
+- the shared AG Grid chunk size
+- the `SimpleGridPage` and `ComplexGridPage` route chunks
+- the `stats.html` treemaps for each mode
 
-In this repro, the published-package build places much more AG Grid implementation code in the shared chunk, while the local-source build moves complex-only modules into the complex route chunk.
+Expected result:
+
+- published package mode over-shares AG Grid code into common output
+- source mode keeps more complex-only AG Grid code in the complex route chunk
