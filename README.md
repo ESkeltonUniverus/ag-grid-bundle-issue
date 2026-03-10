@@ -23,11 +23,9 @@ The point of the repro is to show that the published package produces a larger s
 ## Commands
 
 - `pnpm install`
-- `pnpm build` — build both modes
-- `pnpm build:combined` — build published package mode only
-- `pnpm build:combined-local` — build source mode only
-- `pnpm dev:combined` — run published package mode
-- `pnpm dev:combined-local` — run source mode
+- `pnpm build:combined` — build both modes
+- `pnpm build` — build published package mode only
+- `pnpm build:local` — build source mode only
 
 ## Output
 

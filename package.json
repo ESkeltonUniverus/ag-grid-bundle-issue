@@ -3,11 +3,8 @@
   "private": true,
   "packageManager": "pnpm@10.6.5",
   "scripts": {
-    "build": "pnpm --filter ag-grid-bundle-issue build && pnpm --filter ag-grid-bundle-issue build:source",
-    "build:combined": "pnpm --filter ag-grid-bundle-issue build",
-    "build:combined-local": "pnpm --filter ag-grid-bundle-issue build:source",
-    "dev:combined": "pnpm --filter ag-grid-bundle-issue dev",
-    "dev:combined-local": "pnpm --filter ag-grid-bundle-issue dev:source",
-    "lint": "pnpm -r --filter ./packages/ag-grid-bundle-shared --filter ./projects/ag-grid-bundle-issue lint"
+    "build:combined": "pnpm --filter ag-grid-bundle-issue build && pnpm --filter ag-grid-bundle-issue build:source",
+    "build": "pnpm --filter ag-grid-bundle-issue build",
+    "build:local": "pnpm --filter ag-grid-bundle-issue build:source"
   }
 }
